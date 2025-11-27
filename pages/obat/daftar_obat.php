@@ -7,6 +7,17 @@
   <link rel="stylesheet" href="../../css/index.css">
   <link rel="stylesheet" href="../../css/table.css">
   <link rel="stylesheet" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+  <style>
+    table.dataTable tbody tr.expired,
+    table.dataTable.display tbody tr.expired,
+    table.dataTable.stripe tbody tr.expired,
+    table.dataTable tbody tr.expired>td,
+    table.dataTable.display tbody tr.expired>td,
+    table.dataTable.stripe tbody tr.expired>td {
+      background-color: #f8d7da;
+      color: #842029;
+    }
+  </style>
   <title>Daftar Obat</title>
 </head>
 
@@ -23,6 +34,10 @@
 
   <main class="card-container">
     <div class="table-container">
+      <div class="table-date">
+        Tanggal sekarang: <strong><?php date_default_timezone_set('Asia/Jakarta');
+        echo date('Y-m-d'); ?></strong>
+      </div>
       <table id="myTable" class="data-table" border="0" cellpadding="0" cellspacing="0">
         <thead>
           <tr>
@@ -37,11 +52,18 @@
         <tbody>
           <?php
           include __DIR__ . '/../../koneksi.php';
+          function isExpired($expiryDate)
+          {
+            $currentDate = date('Y-m-d');
+            return $expiryDate < $currentDate;
+          }
+
           $no = 1;
           $query = mysqli_query($conn, "SELECT * FROM tb_obat");
           while ($row = mysqli_fetch_array($query)) {
+            $rowClass = isExpired($row['tgl_kadaluarsa']) ? 'expired' : '';
             ?>
-            <tr>
+            <tr class="<?php echo $rowClass ?>">
               <td><?php echo $no++ ?></td>
               <td><?php echo $row['nama_obat'] ?></td>
               <td><?php echo $row['jenis'] ?></td>
